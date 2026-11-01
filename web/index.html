@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pixel Studio · ton rush + ton texte = ton reel</title>
+<meta name="description" content="Monte un reel vertical avec texte animé, directement dans ton navigateur. Gratuit, open source, ta vidéo ne quitte jamais ton appareil.">
+<style>
+@font-face{font-family:'Instrument Serif';src:url(fonts/instrument-serif.woff2)}
+@font-face{font-family:'Instrument Serif';src:url(fonts/instrument-serif-italic.woff2);font-style:italic}
+@font-face{font-family:JBui;src:url(fonts/jetbrains-mono.woff2);font-weight:500}
+@font-face{font-family:JBui;src:url(fonts/jetbrains-mono-400.woff2);font-weight:400}
+:root{--bg:#121110;--pn:#1a1917;--ln:rgba(239,236,230,.12);--cr:#efece6;--mu:rgba(239,236,230,.55);--ac:#3ddc97}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--cr);font-family:JBui,ui-monospace,monospace;font-size:14px}
+header{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:18px 28px;border-bottom:1px solid var(--ln);flex-wrap:wrap}
+header h1{font-family:'Instrument Serif',serif;font-weight:400;font-size:38px;margin:0}
+header h1 em{color:var(--ac)}
+header nav{display:flex;gap:18px;align-items:center;color:var(--mu);font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+header a{color:var(--cr);text-decoration:none;border-bottom:1px solid var(--ln)}
+main{display:grid;grid-template-columns:minmax(0,1fr) 420px;min-height:calc(100vh - 82px)}
+.left{padding:22px 28px;display:flex;flex-direction:column;gap:20px;border-right:1px solid var(--ln);min-width:0}
+.lab{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mu);margin-bottom:9px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.lab b{color:var(--ac);font-weight:500}
+.drop{border:1.5px dashed rgba(239,236,230,.25);border-radius:14px;padding:16px 20px;display:flex;gap:16px;align-items:center;cursor:pointer}
+.drop.on{border-color:var(--ac)}
+.drop .ic{width:42px;height:42px;border-radius:10px;background:var(--pn);display:grid;place-items:center;font-size:20px;color:var(--ac);flex:none}
+.drop p{margin:0;font-size:15px;overflow-wrap:anywhere}.drop small{color:var(--mu)}
+textarea{width:100%;height:190px;background:var(--pn);color:var(--cr);border:1px solid var(--ln);border-radius:14px;padding:14px 16px;font:400 15px/1.7 JBui,monospace;resize:vertical;outline:none}
+textarea:focus,input:focus{border-color:var(--ac)}
+.fx{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chip{border:1px solid var(--ln);background:none;color:var(--cr);border-radius:20px;padding:7px 12px;font:500 12px JBui;letter-spacing:.04em;cursor:pointer}
+.chip:hover{border-color:var(--ac);color:var(--ac)}
+.chip.on{background:var(--ac);border-color:var(--ac);color:#121110}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.fonts{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+.fonts button{background:var(--pn);border:1px solid var(--ln);border-radius:12px;color:var(--cr);padding:10px 4px 8px;cursor:pointer}
+.fonts button span{display:block;font-size:30px;line-height:1}
+.fonts button small{display:block;font:500 9px JBui;letter-spacing:.08em;color:var(--mu);margin-top:6px;text-transform:uppercase}
+.fonts button.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset}
+.sw{display:flex;gap:9px;flex-wrap:wrap}
+.sw button{width:30px;height:30px;border-radius:50%;border:2px solid transparent;cursor:pointer}
+.sw button.on{border-color:var(--cr);box-shadow:0 0 0 3px var(--bg) inset}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+input[type=range]{width:100%;accent-color:var(--ac)}
+input[type=text]{width:100%;background:var(--pn);color:var(--cr);border:1px solid var(--ln);border-radius:10px;padding:9px 12px;font:500 13px JBui;outline:none}
+.right{padding:22px;display:flex;flex-direction:column;align-items:center;gap:14px;background:#0e0e0d}
+.phone{width:300px;aspect-ratio:9/16;border-radius:40px;border:10px solid #232220;background:#000;overflow:hidden;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.phone canvas{width:100%;height:100%;display:block}
+.ctrl{width:300px;display:flex;align-items:center;gap:10px}
+.ctrl button{background:var(--pn);border:1px solid var(--ln);color:var(--cr);border-radius:50%;width:38px;height:38px;cursor:pointer;flex:none;font-size:14px}
+.ctrl span{color:var(--mu);font-size:12px;min-width:84px;text-align:right}
+.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;width:300px}
+.go{width:300px;background:var(--ac);color:#121110;border:0;border-radius:14px;padding:16px;font:500 14px JBui;letter-spacing:.12em;text-transform:uppercase;cursor:pointer}
+.go:disabled{opacity:.5;cursor:default}
+.ghost{background:none;border:1px solid var(--ln);color:var(--cr);border-radius:20px;padding:9px 14px;font:500 12px JBui;letter-spacing:.06em;cursor:pointer}
+.check{display:flex;gap:8px;align-items:center;color:var(--mu);font-size:12px;cursor:pointer}
+.check input{accent-color:var(--ac)}
+.prog{width:300px;height:6px;background:var(--pn);border-radius:3px;overflow:hidden}.prog div{height:100%;width:0;background:var(--ac)}
+.msg{width:300px;color:var(--mu);font-size:12px;line-height:1.5;min-height:18px;text-align:center}
+.msg a{color:var(--ac)}
+details{width:300px;color:var(--mu);font-size:12px;line-height:1.6}
+summary{cursor:pointer;letter-spacing:.12em;text-transform:uppercase;font-size:11px}
+details input{margin-top:6px}
+.note{width:300px;color:var(--mu);font-size:11px;line-height:1.6;text-align:center}
+@media (max-width:900px){
+ main{grid-template-columns:1fr}
+ .right{order:-1;border-bottom:1px solid var(--ln)}
+ .left{border-right:0;padding:18px 16px}
+ header{padding:14px 16px}
+ .grid{grid-template-columns:1fr 1fr}
+ .fonts{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+</style></head><body>
+<header><h1>Pixel <em>Studio.</em></h1><nav><span>Ton rush + ton texte = ton reel</span><a href="https://github.com/PixelBySel/pixel-studio" target="_blank" rel="noreferrer">Code source</a></nav></header>
+<main>
+<section class="left">
+ <div>
+  <div class="lab"><span>01 · Ton rush (facultatif)</span><span id="info"></span></div>
+  <label class="drop" id="drop"><div class="ic">+</div><div><p id="dp">Glisse ta vidéo ici</p><small>MP4 ou MOV · reste sur ton appareil</small></div><input type="file" id="file" accept="video/*" hidden></label>
+ </div>
+ <div>
+  <div class="lab"><span>02 · Tes écrans · un par ligne</span><span><b>*mot*</b> couleur · <b>|</b> sous-titre · <b>;</b> éléments · <b>/</b> à la ligne</span></div>
+  <textarea id="txt" spellcheck="false"></textarea>
+  <div class="fx" id="fx"></div>
+ </div>
+ <div><div class="lab"><span>03 · Police</span></div><div class="fonts" id="fonts"></div></div>
+ <div class="grid">
+  <div><div class="lab"><span>04 · Couleur</span></div><div class="sw" id="sw"></div></div>
+  <div><div class="lab"><span>05 · Transition</span></div><div class="seg" id="tr"></div></div>
+  <div><div class="lab"><span>06 · Mouvement du rush</span></div><div class="seg" id="mo"></div></div>
+ </div>
+ <div class="grid">
+  <div><div class="lab"><span>07 · Cadrage</span></div><div class="seg" id="fo"></div></div>
+  <div><div class="lab"><span>08 · Lecture</span><b id="sv">4 s / écran</b></div><input type="range" id="sec" min="3" max="6" step="0.5" value="4"></div>
+  <div><div class="lab"><span>09 · Mot-clé de fin</span></div><input type="text" id="kw" placeholder="vide = pas d'écran de fin"></div>
+ </div>
+</section>
+<aside class="right">
+ <div class="phone"><canvas id="cv" width="1080" height="1920"></canvas></div>
+ <div class="ctrl"><button id="play" title="Lecture / pause">❚❚</button><input type="range" id="seek" min="0" max="1000" value="0"><span id="time">0,0 / 0,0 s</span></div>
+ <div class="row"><label class="check"><input type="checkbox" id="safe"> Zones cachées par Instagram</label></div>
+ <button class="go" id="go">Exporter le reel (MP4)</button>
+ <div class="row"><label class="check"><input type="checkbox" id="tt"> + version TikTok « lien en bio »</label><button class="ghost" id="cover">Couverture PNG</button></div>
+ <div class="prog"><div id="bar"></div></div>
+ <div class="msg" id="msg">Tout se passe dans ton navigateur : ta vidéo n'est envoyée nulle part.</div>
+ <details><summary>Ta signature</summary>
+  <input type="text" id="brand" placeholder="Nom en haut des écrans"><input type="text" id="handle" placeholder="@ton.compte"><input type="text" id="promise" placeholder="Ce que tu envoies (« le lien »)">
+ </details>
+ <p class="note">Ajoute ta musique dans Instagram ou TikTok au moment de publier.<br>Gratuit et open source · <a href="https://github.com/PixelBySel/pixel-studio" style="color:inherit">GitHub</a> · par <a href="https://instagram.com/pixel.bysel" style="color:inherit">@pixel.bysel</a></p>
+</aside>
+</main>
+<!-- La vidéo doit rester « affichée » (même minuscule) pour que le navigateur signale chaque image pendant l'export. -->
+<video id="vid" muted playsinline preload="auto" style="position:fixed;left:0;bottom:0;width:2px;height:2px;opacity:.01;pointer-events:none"></video>
+<script type="module" src="app.js"></script>
+</body></html>

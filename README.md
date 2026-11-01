@@ -4,6 +4,8 @@
 
 ![Effets de Pixel Studio](examples/effets.jpg)
 
+**Version web, sans installation : [ressources.pixelbysel.com/studio](https://ressources.pixelbysel.com/studio)** — aperçu en direct, export MP4 dans ton navigateur (Chrome, Edge ou Safari à jour).
+
 Créé par [Selim · Pixel by Sel](https://pixelbysel.com) ([@pixel.bysel](https://instagram.com/pixel.bysel)) pour monter ses reels sans voix. Gratuit et open source (licence MIT).
 
 ## Comment ça marche
@@ -14,7 +16,17 @@ Créé par [Selim · Pixel by Sel](https://pixelbysel.com) ([@pixel.bysel](https
 
 Tout tourne sur ton ordinateur : ta vidéo n'est envoyée nulle part.
 
-## Installation
+## Version web (recommandée)
+
+Ouvre [ressources.pixelbysel.com/studio](https://ressources.pixelbysel.com/studio), glisse ton rush, écris tes écrans : la vidéo se met à jour en direct. « Exporter » encode le MP4 dans ton navigateur (WebCodecs) : ta vidéo n'est envoyée sur aucun serveur. L'export dure à peu près la durée du reel.
+
+Le code de la version web est dans [`web/`](web) : du JavaScript sans dépendance (moteur canvas) + [mp4-muxer](https://github.com/Vanilagy/mp4-muxer) (MIT). Pour l'héberger toi-même, sers le dossier `web/` avec n'importe quel serveur statique.
+
+## Version locale (Node)
+
+La première version, qui tourne sur ton ordinateur avec Playwright et ffmpeg.
+
+### Installation
 
 Il te faut **Node.js 18 ou plus** et **ffmpeg**.
 
