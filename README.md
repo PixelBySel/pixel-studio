@@ -74,6 +74,27 @@ Ajoute le nom de l'effet entre crochets au début de la ligne (ou clique sur les
 | `[tel]` conversation dans un téléphone | `[tel] Il répond *en DM.* \| Tu fais comment ? ; Commente GUIDE ; Merci !` |
 | `[magazine]` couverture de magazine | `[magazine] Le site qui *te ressemble.* \| Édition spéciale` |
 | `[code]` commandes qui s'écrivent | `[code] Une *commande.* \| npm start ; ouvre localhost:4321` |
+| `[ticket]` ticket de caisse qui s'imprime | `[ticket] Ta commande \| Site vitrine : 790 € ; Domaine : 12 € ; Total : 802 €` |
+| `[tampon]` gros tampon qui s'abat | `[tampon] Refusé \| Ton site sans HTTPS ?` |
+| `[commentaire]` un commentaire s'écrit et se publie | `[commentaire] GUIDE \| Comment recevoir le lien ?` |
+| `[abonne]` bouton S'abonner → Abonné | `[abonne] Une astuce *par jour.* \| Pixel by Sel` |
+| `[widgets]` widgets en verre qui flottent | `[widgets] *Mes stats.* \| 7 024 vues ; 107 visites ; 53 abonnés` |
+| `[rebours]` compte à rebours 3, 2, 1 | `[rebours] *C'est parti.* \| Le reel commence` |
+
+#### Effets avec la personne filmée (version web)
+
+Pour ces effets, Pixel Studio repère la personne dans ton rush (détourage + visage) avec [MediaPipe](https://ai.google.dev/edge/mediapipe) de Google, directement dans ton navigateur. Les modèles (environ 1 Mo) se téléchargent la première fois ; ta vidéo n'est jamais envoyée. Marche mieux avec une personne de face, bien éclairée.
+
+| Effet | Exemple |
+|---|---|
+| `[derriere]` un mot géant passe derrière toi | `[derriere] Claude \| Et le mot passe derrière toi` |
+| `[projecteur]` le fond s'éteint, tu restes éclairé | `[projecteur] *Coupe les lumières.*` |
+| `[cible]` un viseur se verrouille sur ton visage | `[cible] *Cible repérée.* \| Le viseur suit ton visage` |
+| `[zoomvisage]` zoom rapide sur ton visage | `[zoomvisage] *Écoute bien.*` |
+| `[orbite]` des cartes tournent autour de ta tête | `[orbite] Mes outils \| Claude ; Vercel ; Figma ; Notion` |
+| `[murtete]` tes titres s'empilent derrière toi | `[murtete] *7 024 vues* \| Sécurité ; Agents IA ; Skills` |
+
+Idées d'effets inspirées de [claude-video-effects](https://github.com/Vibha-Ramprakash/claude-video-effects) (licence MIT), réécrites pour le navigateur.
 
 Sans effet, l'écran affiche un titre et son sous-titre.
 

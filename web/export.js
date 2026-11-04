@@ -1,6 +1,7 @@
 // Pixel Studio · export MP4 dans le navigateur (WebCodecs + mp4-muxer). Rien n'est envoyé sur un serveur.
 import { Muxer, ArrayBufferTarget } from './vendor/mp4-muxer.mjs';
-import { W, H, FPS, build, drawFrame, sourceTime } from './engine.js';
+import { W, H, FPS, build, drawFrame, sourceTime, viewRect } from './engine.js';
+import { loadPerson, analyzePerson, resetPerson } from './person.js';
 
 const CODECS = [
   ['avc1.640028', 'avc'], ['avc1.4d0028', 'avc'], ['avc1.42e028', 'avc'], // H.264 : lu partout, accepté par Instagram et TikTok
@@ -62,6 +63,8 @@ export async function exportMp4(job, video, onProgress = () => {}, signal) {
   const codec = await pickCodec();
   if (!codec) throw new Error("Ton navigateur ne sait pas encoder la vidéo. Utilise Chrome, Edge ou Safari à jour.");
   const R = build(job);
+  let usePerson = false;
+  if (R.needsPerson && video && video.duration) { try { await loadPerson(); usePerson = true; resetPerson(); } catch { /* effets sans découpe */ } }
   const canvas = document.createElement('canvas'); canvas.width = W; canvas.height = H;
   const ctx = canvas.getContext('2d', { alpha: false });
   const target = new ArrayBufferTarget();
@@ -72,7 +75,7 @@ export async function exportMp4(job, video, onProgress = () => {}, signal) {
   const n = Math.round(R.duration * FPS);
   const emit = i => {
     const t = i / FPS;
-    drawFrame(ctx, R, t, video);
+    drawFrame(ctx, R, t, video, usePerson ? analyzePerson(video, viewRect(R, t, video), .7) : null);
     const frame = new VideoFrame(canvas, { timestamp: Math.round(i * 1e6 / FPS), duration: Math.round(1e6 / FPS) });
     encoder.encode(frame, { keyFrame: i % (FPS * 2) === 0 });
     frame.close();
@@ -101,8 +104,10 @@ export async function exportMp4(job, video, onProgress = () => {}, signal) {
 // Couverture : l'image de l'accroche, en PNG.
 export async function exportCover(job, video, at = 1.8) {
   const R = build(job);
+  let usePerson = false;
+  if (R.needsPerson && video && video.duration) { try { await loadPerson(); usePerson = true; } catch {} }
   const canvas = document.createElement('canvas'); canvas.width = W; canvas.height = H;
   if (video && video.duration) { video.pause(); await seek(video, sourceTime(R, at, video)); }
-  drawFrame(canvas.getContext('2d'), R, at, video);
+  drawFrame(canvas.getContext('2d'), R, at, video, usePerson ? analyzePerson(video, viewRect(R, at, video), 1) : null);
   return new Promise(r => canvas.toBlob(r, 'image/png'));
 }

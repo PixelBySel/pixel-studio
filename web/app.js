@@ -1,11 +1,14 @@
 // Pixel Studio · interface web (aperçu en direct + export).
-import { W, H, FONTS, build, drawFrame, drawSafeZones, sourceTime, loadFonts } from './engine.js';
+import { W, H, FONTS, build, drawFrame, drawSafeZones, sourceTime, loadFonts, viewRect } from './engine.js';
+import { loadPerson, personReady, analyzePerson } from './person.js';
 import { exportMp4, exportCover, pickCodec } from './export.js';
 
 const $ = id => document.getElementById(id);
 const store = { get(k, d) { try { return localStorage.getItem('ps.' + k) ?? d; } catch { return d; } }, set(k, v) { try { localStorage.setItem('ps.' + k, v); } catch {} } };
 const COLORS = ['#ff4f1f', '#6f9bff', '#3ddc97', '#ffd84d', '#b79cff', '#ff6b9a'];
-const FX = [['verre', 'Verre'], ['liste', 'Liste à cocher'], ['mur', 'Mur de titres'], ['chiffre', 'Chiffre qui monte'], ['tel', 'Téléphone'], ['magazine', 'Magazine'], ['code', 'Code']];
+const FX = [['verre', 'Verre'], ['liste', 'Liste à cocher'], ['mur', 'Mur de titres'], ['chiffre', 'Chiffre qui monte'], ['tel', 'Téléphone'], ['magazine', 'Magazine'], ['code', 'Code'],
+  ['ticket', 'Ticket de caisse'], ['tampon', 'Tampon'], ['commentaire', 'Commentaire'], ['abonne', "S'abonner"], ['widgets', 'Widgets en verre'], ['rebours', 'Compte à rebours'],
+  ['derriere', 'Mot derrière toi ◉'], ['projecteur', 'Projecteur ◉'], ['cible', 'Viseur ◉'], ['zoomvisage', 'Zoom visage ◉'], ['orbite', 'Orbite ◉'], ['murtete', 'Titres derrière toi ◉']];
 const TR = [['fondu', 'Fondu'], ['glisse', 'Glissé'], ['zoom', 'Zoom']];
 const MO = [['zoom', 'Zoom avant'], ['recul', 'Recul'], ['ecran', 'À chaque écran'], ['fixe', 'Fixe']];
 const FO = [['gauche', 'Gauche'], ['centre', 'Centre'], ['droite', 'Droite']];
@@ -48,7 +51,7 @@ function loadRush(f) {
   if (video.src) URL.revokeObjectURL(video.src);
   video.src = URL.createObjectURL(f);
   $('dp').textContent = f.name; $('drop').classList.add('on');
-  video.onloadedmetadata = () => { hasRush = true; $('info').textContent = `${video.videoWidth}×${video.videoHeight} · ${video.duration.toFixed(1)} s`; restart(); };
+  video.onloadedmetadata = () => { hasRush = true; $('info').textContent = `${video.videoWidth}×${video.videoHeight} · ${video.duration.toFixed(1)} s`; restart(); ensurePerson(); };
   video.onerror = () => { hasRush = false; $('dp').textContent = 'Vidéo illisible dans ce navigateur. Sur iPhone : Réglages > Appareil photo > Formats > « Le plus compatible », ou essaie Safari.'; };
 }
 $('file').onchange = e => loadRush(e.target.files[0]);
@@ -63,7 +66,15 @@ const job = (extra = {}) => ({
 });
 const cv = $('cv'), ctx = cv.getContext('2d');
 let R = null, exporting = false, playing = true, t0 = performance.now(), tNow = 0, scrubbing = false;
-function rebuild() { const j = job(); if (!j.screens.length) j.screens = ['Écris ton premier écran.']; R = build(j); }
+function rebuild() { const j = job(); if (!j.screens.length) j.screens = ['Écris ton premier écran.']; R = build(j); ensurePerson(); }
+// Effets marqués ◉ : on repère la personne filmée (détourage + visage) dans le navigateur.
+let personMsg = false;
+function ensurePerson() {
+  if (!R || !R.needsPerson || !hasRush || personReady()) return;
+  if (!personMsg) { personMsg = true; $('msg').textContent = 'Effets ◉ : préparation du détourage (première fois, quelques secondes)…'; }
+  loadPerson().then(() => { $('msg').textContent = 'Détourage prêt. Tout est calculé sur ton appareil.'; })
+    .catch(() => { personMsg = false; $('msg').textContent = "Le détourage n'a pas pu se charger (connexion ?). Les effets ◉ s'affichent sans découpe."; });
+}
 function restart() { tNow = 0; t0 = performance.now(); syncVideo(true); }
 function syncVideo(force) {
   if (!hasRush || !R || exporting) return;
@@ -78,7 +89,8 @@ function loop(now) {
   if (R && !exporting) {
     if (playing && !scrubbing) { tNow = (now - t0) / 1000; if (tNow >= R.duration) { tNow = 0; t0 = now; syncVideo(true); } }
     syncVideo(false);
-    drawFrame(ctx, R, tNow, hasRush ? video : null);
+    const person = R.needsPerson && hasRush && personReady() && video.readyState >= 2 ? analyzePerson(video, viewRect(R, tNow, video)) : null;
+    drawFrame(ctx, R, tNow, hasRush ? video : null, person);
     if ($('safe').checked) drawSafeZones(ctx);
     $('time').textContent = `${tNow.toFixed(1).replace('.', ',')} / ${R.duration.toFixed(1).replace('.', ',')} s`;
     if (!scrubbing) $('seek').value = Math.round(1000 * tNow / R.duration);
