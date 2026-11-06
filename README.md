@@ -87,14 +87,14 @@ Pour ces effets, Pixel Studio repère la personne dans ton rush (détourage + vi
 
 | Effet | Exemple |
 |---|---|
-| `[derriere]` un mot géant passe derrière toi | `[derriere] Claude \| Et le mot passe derrière toi` |
+| `[derriere]` un mot géant passe derrière toi | `[derriere] IA \| Et le mot passe derrière toi` |
 | `[projecteur]` le fond s'éteint, tu restes éclairé | `[projecteur] *Coupe les lumières.*` |
 | `[cible]` un viseur se verrouille sur ton visage | `[cible] *Cible repérée.* \| Le viseur suit ton visage` |
 | `[zoomvisage]` zoom rapide sur ton visage | `[zoomvisage] *Écoute bien.*` |
-| `[orbite]` des cartes tournent autour de ta tête | `[orbite] Mes outils \| Claude ; Vercel ; Figma ; Notion` |
+| `[orbite]` des cartes tournent autour de ta tête | `[orbite] Mes outils \| Figma ; Vercel ; Notion ; Canva` |
 | `[murtete]` tes titres s'empilent derrière toi | `[murtete] *7 024 vues* \| Sécurité ; Agents IA ; Skills` |
 
-Idées d'effets inspirées de [claude-video-effects](https://github.com/Vibha-Ramprakash/claude-video-effects) (licence MIT), réécrites pour le navigateur.
+Certaines idées d'effets viennent d'un projet open source de [Vibha Ramprakash](https://github.com/Vibha-Ramprakash) (licence MIT), réécrites pour le navigateur.
 
 Sans effet, l'écran affiche un titre et son sous-titre.
 
@@ -112,7 +112,7 @@ Le MP4 sort dans le dossier `out/`. Il a une piste audio vide : ajoute ta musiqu
 
 - Le rendu prend environ 1 à 3 minutes pour un reel de 30 s, selon ton ordinateur.
 - Si ton rush est plus court que le reel, il est légèrement ralenti pour couvrir toute la durée.
-- Le gabarit vidéo est dans `public/template.html` : c'est du HTML et du CSS, tu peux le modifier (ou demander à Claude Code de le faire) pour créer tes propres effets.
+- Le gabarit vidéo est dans `public/template.html` : c'est du HTML et du CSS, tu peux le modifier (ou demander à ton assistant IA de le faire) pour créer tes propres effets.
 
 ## Licence
 

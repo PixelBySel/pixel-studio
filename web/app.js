@@ -8,7 +8,7 @@ const store = { get(k, d) { try { return localStorage.getItem('ps.' + k) ?? d; }
 const COLORS = ['#ff4f1f', '#6f9bff', '#3ddc97', '#ffd84d', '#b79cff', '#ff6b9a'];
 const FX = [['verre', 'Verre'], ['liste', 'Liste à cocher'], ['mur', 'Mur de titres'], ['chiffre', 'Chiffre qui monte'], ['tel', 'Téléphone'], ['magazine', 'Magazine'], ['code', 'Code'],
   ['ticket', 'Ticket de caisse'], ['tampon', 'Tampon'], ['commentaire', 'Commentaire'], ['abonne', "S'abonner"], ['widgets', 'Widgets en verre'], ['rebours', 'Compte à rebours'],
-  ['derriere', 'Mot derrière toi ◉'], ['projecteur', 'Projecteur ◉'], ['cible', 'Viseur ◉'], ['zoomvisage', 'Zoom visage ◉'], ['orbite', 'Orbite ◉'], ['murtete', 'Titres derrière toi ◉']];
+  ['derriere', 'Mot derrière toi (visage)'], ['projecteur', 'Projecteur (visage)'], ['cible', 'Viseur (visage)'], ['zoomvisage', 'Zoom visage (visage)'], ['orbite', 'Orbite (visage)'], ['murtete', 'Titres derrière toi (visage)']];
 const TR = [['fondu', 'Fondu'], ['glisse', 'Glissé'], ['zoom', 'Zoom']];
 const MO = [['zoom', 'Zoom avant'], ['recul', 'Recul'], ['ecran', 'À chaque écran'], ['fixe', 'Fixe']];
 const FO = [['gauche', 'Gauche'], ['centre', 'Centre'], ['droite', 'Droite']];
@@ -67,13 +67,13 @@ const job = (extra = {}) => ({
 const cv = $('cv'), ctx = cv.getContext('2d');
 let R = null, exporting = false, playing = true, t0 = performance.now(), tNow = 0, scrubbing = false;
 function rebuild() { const j = job(); if (!j.screens.length) j.screens = ['Écris ton premier écran.']; R = build(j); ensurePerson(); }
-// Effets marqués ◉ : on repère la personne filmée (détourage + visage) dans le navigateur.
+// Effets marqués (visage) : on repère la personne filmée (détourage + visage) dans le navigateur.
 let personMsg = false;
 function ensurePerson() {
   if (!R || !R.needsPerson || !hasRush || personReady()) return;
-  if (!personMsg) { personMsg = true; $('msg').textContent = 'Effets ◉ : préparation du détourage (première fois, quelques secondes)…'; }
+  if (!personMsg) { personMsg = true; $('msg').textContent = 'Effets (visage) : préparation du détourage (première fois, quelques secondes)…'; }
   loadPerson().then(() => { $('msg').textContent = 'Détourage prêt. Tout est calculé sur ton appareil.'; })
-    .catch(() => { personMsg = false; $('msg').textContent = "Le détourage n'a pas pu se charger (connexion ?). Les effets ◉ s'affichent sans découpe."; });
+    .catch(() => { personMsg = false; $('msg').textContent = "Le détourage n'a pas pu se charger (connexion ?). Les effets (visage) s'affichent sans découpe."; });
 }
 function restart() { tNow = 0; t0 = performance.now(); syncVideo(true); }
 function syncVideo(force) {
